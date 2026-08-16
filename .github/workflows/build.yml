@@ -20,7 +20,7 @@ jobs:
           release: "14.2.Rel1"
       - name: Build
         working-directory: MDUV380_firmware
-        run: make -j$(nproc) ENABLE_AES=${{ matrix.aes }}
+        run: make -j$(nproc) ENABLE_AES=${{ matrix.aes }} HAS_COLOURS=1
       - name: Report size
         working-directory: MDUV380_firmware
         run: arm-none-eabi-size build/openuv380-10w.elf
