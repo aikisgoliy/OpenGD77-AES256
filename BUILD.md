@@ -33,7 +33,7 @@ python3 MDUV380_firmware/tools/verify_codec_donor.py <donor.bin>     # prints VA
 ## Manual build
 ```sh
 cd MDUV380_firmware
-make -j$(nproc)                 # stock; or: make ENABLE_AES=1
+make -j$(nproc)                 # stock; or: make ENABLE_AES=1 DMR_AES_DIAG_RX=1
 # -> build/openuv380-10w.bin  (~806 KB: code + reserved codec region)
 ```
 The `Makefile` mirrors the CubeIDE `MDUV380_10W_PLUS_FW` release config (-Os, `-mcpu=cortex-m4 -mfpu=fpv4-sp-d16
