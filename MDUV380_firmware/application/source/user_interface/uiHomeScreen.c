@@ -117,8 +117,7 @@ static void drawStatusBar( const uiHomeScreenData_t * data)
 	if (data->isTransmitting)
 	{
 		uint8_t txK = dmrAesTxCurrentKey();
-		if (txK == 0) { txK = aesKey; }
-		if (data->isDigital && (txK > 0))
+				if (data->isDigital && (txK > 0))
 		{
 			snprintf(aesBadge, sizeof(aesBadge), "TX A%u", txK);
 			badge = aesBadge;
