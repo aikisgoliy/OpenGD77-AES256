@@ -36,6 +36,8 @@
 #include "functions/sound.h"
 #include "functions/rxPowerSaving.h"
 #include "hardware/HR-C6000.h"   // slotState: a DMR call in progress on the active row
+#include "crypto/dmr_aes_hook.h"
+
 
 #if defined(ENABLE_DUAL_SCREEN)
 
@@ -466,7 +468,7 @@ static void drawRow(int line, int16_t y, bool active)
 	char name[SCREEN_LINE_BUFFER_SIZE];
 	char l1[SCREEN_LINE_BUFFER_SIZE + 8];
 	char number[8];
-	char mode[8];
+	char mode[12];
 	char l3[SCREEN_LINE_BUFFER_SIZE + 8];
 	CodeplugChannel_t tmp;
 	CodeplugZone_t zoneTmp;
@@ -546,7 +548,27 @@ static void drawRow(int line, int16_t y, bool active)
 
 	if (ch != NULL)
 	{
-		snprintf(mode, sizeof(mode), "%s", (digital ? "DMR" : "ANA"));
+		if (digital)
+		{
+			uint8_t k = (active ? dmrAesRxKeyHint() : 0);
+			if (k == 0)
+			{
+				uint8_t chEnc = (uint8_t)(ch->rxTone & 0xFFU);
+				k = ((chEnc > 0) && (chEnc < 16)) ? chEnc : dmrAesTxKeyId();
+			}
+			if (k > 0)
+			{
+				snprintf(mode, sizeof(mode), "DMR AES%u", k);
+			}
+			else
+			{
+				snprintf(mode, sizeof(mode), "DMR");
+			}
+		}
+		else
+		{
+			snprintf(mode, sizeof(mode), "ANA");
+		}
 	}
 	else
 	{
