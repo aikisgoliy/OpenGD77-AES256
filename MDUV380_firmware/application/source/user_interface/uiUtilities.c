@@ -2568,24 +2568,32 @@ bool uiUtilityDrawTelemetryRx(int16_t y, int16_t historyY, int16_t historyHeight
 bool uiUtilityHomeScreenIsActive(void)
 {
 #if defined(HAS_TELEMETRY)
-#if defined(ENABLE_DUAL_SCREEN)
-	// The dual screen takes over the home screen while its option is on
-	if (uiDualScreenIsEnabled())
-	{
-		return false;
-	}
-#endif
 	if (settingsIsOptionBitSet(BIT_CLASSIC_MAIN_SCREEN) == false)
 	{
 		int currentMenu = menuSystemGetCurrentMenuNumber();
+		bool isChannelOrTx = ((menuSystemGetRootMenuNumber() == UI_CHANNEL_MODE) && ((currentMenu == UI_CHANNEL_MODE) || (currentMenu == UI_TX_SCREEN)));
 
-		return ((menuSystemGetRootMenuNumber() == UI_CHANNEL_MODE) && ((currentMenu == UI_CHANNEL_MODE) || (currentMenu == UI_TX_SCREEN)));
+		if (isChannelOrTx == false)
+		{
+			return false;
+		}
+
+#if defined(ENABLE_DUAL_SCREEN)
+		if (uiDualScreenIsEnabled())
+		{
+			bool callActive = (isTransmittingIgnoringAPRSBeaconing() ||
+					uiDataGlobal.isDisplayingQSOData ||
+					((audioAmpGetStatus() & AUDIO_AMP_CHANNEL_RF) != 0) ||
+					((trxGetMode() == RADIO_MODE_DIGITAL) && (slotState != DMR_STATE_IDLE)));
+			return callActive;
+		}
+#endif
+		return true;
 	}
 #endif
 
 	return false;
 }
-
 #if defined(HAS_TELEMETRY)
 // Storage of the texts of uiHomeScreenData_t
 typedef struct
