@@ -1304,7 +1304,23 @@ static void handleEvent(uiEvent_t *ev)
 			return;
 		}
 	}
+{
+		static bool sk12LockLatch = false;
 
+		if ((BUTTONCHECK_DOWN(ev, BUTTON_SK1) == 0) && (BUTTONCHECK_DOWN(ev, BUTTON_SK2) == 0))
+		{
+			sk12LockLatch = false;
+		}
+		else if ((sk12LockLatch == false) && BUTTONCHECK_DOWN(ev, BUTTON_SK1) && BUTTONCHECK_DOWN(ev, BUTTON_SK2))
+		{
+			sk12LockLatch = true;
+			uiDataGlobal.displayChannelSettings = false;
+			keypadLocked = true;
+			PTTLocked = true;
+			menuSystemPushNewMenu(UI_LOCK_SCREEN);
+			return;
+		}
+	}
 	if (handleMonitorMode(ev))
 	{
 		uiDataGlobal.displayChannelSettings = false;
