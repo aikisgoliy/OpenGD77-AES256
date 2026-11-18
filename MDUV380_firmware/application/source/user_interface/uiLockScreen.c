@@ -237,21 +237,14 @@ static void updateScreen(bool updateOnly)
 
 static void handleEvent(uiEvent_t *ev)
 {
-	if (ev->events & BUTTON_EVENT)
-	{
-		if (repeatVoicePromptOnSK1(ev))
-		{
-			return;
-		}
-	}
-
 	if ((ev->events & FUNCTION_EVENT) && (ev->function == FUNC_REDRAW))
 	{
 		updateScreen(false);
 		return;
 	}
 
-	if (KEYCHECK_DOWN(ev->keys, KEY_STAR) && BUTTONCHECK_DOWN(ev, BUTTON_SK2))
+	if ((KEYCHECK_DOWN(ev->keys, KEY_STAR) && BUTTONCHECK_DOWN(ev, BUTTON_SK2)) ||
+			(BUTTONCHECK_DOWN(ev, BUTTON_SK1) && BUTTONCHECK_DOWN(ev, BUTTON_SK2)))
 	{
 		if ((nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_THRESHOLD) && voicePromptsIsPlaying())
 		{
@@ -268,8 +261,18 @@ static void handleEvent(uiEvent_t *ev)
 		menuSystemPopAllAndDisplayRootMenu();
 		lockscreenIsRearming = false;
 		menuSystemPushNewMenu(UI_LOCK_SCREEN);
+		return;
 	}
-	else if ((nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_THRESHOLD) && voicePromptsIsPlaying() && (ev->keys.key != 0) && (ev->keys.event & KEY_MOD_UP))
+
+	if (ev->events & BUTTON_EVENT)
+	{
+		if (repeatVoicePromptOnSK1(ev))
+		{
+			return;
+		}
+	}
+
+	if ((nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_THRESHOLD) && voicePromptsIsPlaying() && (ev->keys.key != 0) && (ev->keys.event & KEY_MOD_UP))
 	{
 #if defined(PLATFORM_MD2017)
 		bool trackballEvent = ((ev->keys.event == (KEY_MOD_UP | KEY_MOD_PRESS)) && (
