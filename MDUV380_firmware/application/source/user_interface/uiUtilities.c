@@ -2805,7 +2805,7 @@ void uiUtilityDrawTelemetryDmr(void)
 #if defined(ENABLE_DUAL_SCREEN)
 	if (uiDualScreenIsEnabled() && (uiUtilityHomeScreenIsActive() == false))
 	{
-		return false;
+		return;
 	}
 #endif
 	if ((trxGetMode() == RADIO_MODE_DIGITAL) && uiDataGlobal.isDisplayingQSOData && (HRC6000GetReceivedTgOrPcId() != 0) &&
