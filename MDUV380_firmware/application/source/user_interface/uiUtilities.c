@@ -2513,9 +2513,7 @@ bool uiUtilityDrawTelemetryRx(int16_t y, int16_t historyY, int16_t historyHeight
 	static uint32_t historyFrequency = 0;
 
 #if defined(ENABLE_DUAL_SCREEN)
-	// The dual screen owns the whole home area while its option is on; the meter rows and the
-	// history would land on its second row (bench: the block sat where row B's frequency goes).
-	if (uiDualScreenIsEnabled())
+	if (uiDualScreenCanDraw())
 	{
 		return false;
 	}
@@ -2582,7 +2580,6 @@ bool uiUtilityHomeScreenIsActive(void)
 		if (uiDualScreenIsEnabled())
 		{
 			bool callActive = (isTransmittingIgnoringAPRSBeaconing() ||
-					uiDataGlobal.isDisplayingQSOData ||
 					((audioAmpGetStatus() & AUDIO_AMP_CHANNEL_RF) != 0) ||
 					((trxGetMode() == RADIO_MODE_DIGITAL) && (slotState != DMR_STATE_IDLE)));
 			return callActive;
@@ -2806,7 +2803,7 @@ void uiUtilityDrawTelemetryDmr(void)
 {
 #if defined(HAS_TELEMETRY)
 #if defined(ENABLE_DUAL_SCREEN)
-	if (uiDualScreenIsEnabled())
+	if (uiDualScreenCanDraw())
 	{
 		return;   // as for the meter rows: the dual screen owns the area
 	}
