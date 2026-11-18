@@ -35,7 +35,7 @@
 #include "user_interface/uiGlobals.h"
 #include "user_interface/uiHomeScreen.h"
 #include "user_interface/uiCustomStrings.h"
-
+#include "crypto/dmr_aes_hook.h"
 #if defined(HAS_TELEMETRY)
 
 #define CHAR_WIDTH               6  // FONT_SIZE_1
@@ -107,10 +107,45 @@ static void drawBattery(uint8_t percentage)
 	}
 }
 
-static void drawStatusBar(const uiHomeScreenData_t *data)
+static void drawStatusBar( const uiHomeScreenData_t * data)
 {
-	char buffer[SCREEN_LINE_BUFFER_SIZE];
-	const char *badge = (data->isTransmitting ? "TX" : (data->isScanning ? uiCustomStringGet(CUSTOM_STRING_SCAN) : (data->isDigital ? "DMR" : "FM")));
+	char buffer[ SCREEN_LINE_BUFFER_SIZE];
+		char aesBadge[12];
+	uint8_t aesKey = (data->isDigital ? dmrAesRxKeyHint() : 0);
+	const char * badge;
+
+	if (data->isTransmitting)
+	{
+		if (dmrAesTxActive())
+		{
+			snprintf(aesBadge, sizeof(aesBadge), "TX A%u", (aesKey > 0 ? aesKey : dmrAesTxKeyId()));
+			badge = aesBadge;
+		}
+		else
+		{
+			badge = "TX";
+		}
+	}
+	else if (data->isScanning)
+	{
+		badge = uiCustomStringGet(CUSTOM_STRING_SCAN);
+	}
+	else if (data->isDigital)
+	{
+		if (aesKey > 0)
+		{
+			snprintf(aesBadge, sizeof(aesBadge), "AES%u", aesKey);
+			badge = aesBadge;
+		}
+		else
+		{
+			badge = "DMR";
+		}
+	}
+	else
+	{
+		badge = "FM";
+	}
 	int16_t badgeWidth = ((strlen(badge) * CHAR_WIDTH) + (BADGE_PADDING * 2));
 	bool hasClock = ((data->hours >= 0) && (data->minutes >= 0));
 	uint8_t batteryPercentage = ((data->batteryPercentage > 100) ? 100 : data->batteryPercentage);
