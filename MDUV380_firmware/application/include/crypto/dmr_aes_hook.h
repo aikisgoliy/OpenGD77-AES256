@@ -37,6 +37,8 @@ void dmrAesTxVoice(uint8_t *ambe, int seq);
 void dmrAesTxCodecFrame(uint16_t *b49);            /* encrypt 49 AMBE params during encode */
 void dmrAesTxStuffMI(uint16_t *b72);               /* stuff Late-Entry MI into post-ECC codeword */
 int  dmrAesTxActive(void);
+int  dmrAesRxActiveKey(void);
+uint8_t dmrAesTxCurrentKey(void);
 void dmrAesTxEnd(void);
 int  dmrAesTxEmbSb(uint8_t out4[4]);               /* burst-F EMB Late-Entry Single Block (alg/key) */
 #ifdef DMR_AES_DIAG_PATTERN
