@@ -826,7 +826,11 @@ void dmrAesTxVoice(uint8_t *ambe, int seq) { (void)ambe; (void)seq; }
 int  dmrAesTxActive(void) { return s_txActive; }
 int dmrAesRxActiveKey(void)
 {
-	if (s_rxActive) { return (int)s_rx.key_id; }
+	if (s_rxActive || s_rxBurstEnc)
+	{
+		uint8_t k = (s_rx.key_id > 0) ? s_rx.key_id : s_rxKeyId;
+		return (k > 0) ? (int)k : 1;
+	}
 	if (s_rxLcSeen && s_rxLcPrivacy) { return -1; }
 	return 0;
 }
