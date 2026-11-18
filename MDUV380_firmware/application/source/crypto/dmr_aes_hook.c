@@ -824,6 +824,17 @@ void dmrAesTxStuffMI(uint16_t *b72)
 /* The old 27-byte FEC-octet TX crypt is gone — encryption is at the codec layer above. */
 void dmrAesTxVoice(uint8_t *ambe, int seq) { (void)ambe; (void)seq; }
 int  dmrAesTxActive(void) { return s_txActive; }
+int dmrAesRxActiveKey(void)
+{
+	if (s_rxActive) { return (int)s_rx.key_id; }
+	if (s_rxLcSeen && s_rxLcPrivacy) { return -1; }
+	return 0;
+}
+
+uint8_t dmrAesTxCurrentKey(void)
+{
+	return s_txActive ? s_tx.key_id : 0;
+}
 void dmrAesTxEnd(void)
 {
     if (s_txActive)
