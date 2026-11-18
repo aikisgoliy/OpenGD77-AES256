@@ -116,9 +116,11 @@ static void drawStatusBar( const uiHomeScreenData_t * data)
 
 	if (data->isTransmitting)
 	{
-		if (dmrAesTxActive())
+		uint8_t txK = dmrAesTxCurrentKey();
+		if (txK == 0) { txK = aesKey; }
+		if (data->isDigital && (txK > 0))
 		{
-			snprintf(aesBadge, sizeof(aesBadge), "TX A%u", (aesKey > 0 ? aesKey : dmrAesTxKeyId()));
+			snprintf(aesBadge, sizeof(aesBadge), "TX A%u", txK);
 			badge = aesBadge;
 		}
 		else
@@ -132,7 +134,24 @@ static void drawStatusBar( const uiHomeScreenData_t * data)
 	}
 	else if (data->isDigital)
 	{
-		if (aesKey > 0)
+		if (data->isReceivingCall)
+		{
+			int rxK = dmrAesRxActiveKey();
+			if (rxK > 0)
+			{
+				snprintf(aesBadge, sizeof(aesBadge), "RX A%d", rxK);
+				badge = aesBadge;
+			}
+			else if (rxK < 0)
+			{
+				badge = "ENC ?";
+			}
+			else
+			{
+				badge = "OPEN";
+			}
+		}
+		else if (aesKey > 0)
 		{
 			snprintf(aesBadge, sizeof(aesBadge), "AES%u", aesKey);
 			badge = aesBadge;
