@@ -841,7 +841,7 @@ void applicationMainTask(void)
 		{
 			if (keypadLocked && ((buttons & BUTTON_PTT) == 0))
 			{
-				{
+				
 				{
 					static uint32_t starUnlockStart = 0;
 					static bool starUnlockLatch = false;
