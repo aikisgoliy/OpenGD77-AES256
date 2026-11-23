@@ -243,8 +243,9 @@ static void handleEvent(uiEvent_t *ev)
 		return;
 	}
 
-	if ((KEYCHECK_DOWN(ev->keys, KEY_STAR) && BUTTONCHECK_DOWN(ev, BUTTON_SK2)) ||
-			(BUTTONCHECK_DOWN(ev, BUTTON_SK1) && BUTTONCHECK_DOWN(ev, BUTTON_SK2)))
+	i// СТАЛО (долгое удержание * ИЛИ стандартное SK2 + *):
+	if ((KEYCHECK_LONGDOWN(ev->keys, KEY_STAR) && (KEYCHECK_LONGDOWN_REPEAT(ev->keys, KEY_STAR) == false)) ||
+			(KEYCHECK_DOWN(ev->keys, KEY_STAR) && BUTTONCHECK_DOWN(ev, BUTTON_SK2)))
 	{
 		if ((nonVolatileSettings.audioPromptMode >= AUDIO_PROMPT_MODE_VOICE_THRESHOLD) && voicePromptsIsPlaying())
 		{
