@@ -172,6 +172,9 @@ typedef enum
 #endif
 	BIT_CHANNELS_ARE_READ_ONLY      = (SETTINGS_BITS_BANK_0 | (1 << 27)),
 	BIT_UI_USES_DOUBLE_HEIGHT       = (SETTINGS_BITS_BANK_0 | (1 << 28)),
+	BIT_STAR_LOCK_PTT               = (SETTINGS_BITS_BANK_0 | (1 << 29)),
+
+	// Last usable bit is 29
 
 	// Last usable bit is 29
 	//BIT_xxxxxxx_xxxxxxxxxxxx      = (SETTINGS_BITS_BANK_1 | (1 << 0)),
