@@ -243,7 +243,7 @@ static void handleEvent(uiEvent_t *ev)
 		return;
 	}
 
-	i// СТАЛО (долгое удержание * ИЛИ стандартное SK2 + *):
+	// СТАЛО (долгое удержание * ИЛИ стандартное SK2 + *):
 	if ((KEYCHECK_LONGDOWN(ev->keys, KEY_STAR) && (KEYCHECK_LONGDOWN_REPEAT(ev->keys, KEY_STAR) == false)) ||
 			(KEYCHECK_DOWN(ev->keys, KEY_STAR) && BUTTONCHECK_DOWN(ev, BUTTON_SK2)))
 	{
