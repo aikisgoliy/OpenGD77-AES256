@@ -2242,31 +2242,14 @@ static void handleEvent(uiEvent_t *ev)
 					}
 				}
 			}
-			else if ((uiVFOModeSweepScanning(true) == false) && KEYCHECK_LONGDOWN(ev->keys, KEY_STAR))
+			else if ((uiVFOModeSweepScanning(true) == false) && KEYCHECK_LONGDOWN(ev->keys, KEY_STAR) && (KEYCHECK_LONGDOWN_REPEAT(ev->keys, KEY_STAR) == false) && (BUTTONCHECK_DOWN(ev, BUTTON_SK2) == 0))
 			{
-				if (trxGetMode() == RADIO_MODE_DIGITAL)
-				{
-					tsSetManualOverride(((Channel_t)nonVolatileSettings.currentVFONumber), TS_NO_OVERRIDE);
-					tsSetContactHasBeenOverriden(((Channel_t)nonVolatileSettings.currentVFONumber), false);
-
-					// Check if this channel has an Rx Group
-					if ((currentRxGroupData.name[0] != 0) &&
-							(nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_A_MODE + nonVolatileSettings.currentVFONumber] < currentRxGroupData.NOT_IN_CODEPLUG_numTGsInGroup))
-					{
-						codeplugContactGetDataForIndex(currentRxGroupData.contacts[nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_VFO_A_MODE + nonVolatileSettings.currentVFONumber]], &currentContactData);
-					}
-					else
-					{
-						codeplugContactGetDataForIndex(currentChannelData->contact, &currentContactData);
-					}
-
-					trxUpdateTsForCurrentChannelWithSpecifiedContact(&currentContactData);
-
-					lastHeardClearLastID();
-					uiDataGlobal.displayQSOState = QSO_DISPLAY_DEFAULT_SCREEN;
-					uiVFOModeUpdateScreen(0);
-					announceItem(PROMPT_SEQUENCE_TS, PROMPT_THRESHOLD_1);
-				}
+				uiDataGlobal.displayChannelSettings = false;
+				keypadLocked = true;
+				PTTLocked = true;
+				keyboardReset();
+				menuSystemPushNewMenu(UI_LOCK_SCREEN);
+				return;
 			}
 			else if(uiVFOModeSweepScanning(true) &&  // Reset Sweep noise floor or Sweep Gain
 					((KEYCHECK_SHORTUP(ev->keys, KEY_DOWN) || KEYCHECK_SHORTUP(ev->keys, KEY_UP)
