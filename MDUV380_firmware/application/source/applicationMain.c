@@ -837,10 +837,42 @@ void applicationMainTask(void)
 			headerRowIsDirty = false;
 		}
 
-		if (keypadLocked || PTTLocked)
+	if (keypadLocked || PTTLocked)
 		{
 			if (keypadLocked && ((buttons & BUTTON_PTT) == 0))
 			{
+				{
+					static uint32_t starUnlockStart = 0;
+
+					if ((keys.key == KEY_STAR) && ((buttons & BUTTON_SK2) == 0) && (syntheticEvent == false))
+					{
+						if (starUnlockStart == 0)
+						{
+							starUnlockStart = ticksGetMillis();
+						}
+						else if ((ticksGetMillis() - starUnlockStart) >= 1000U)
+						{
+							starUnlockStart = 0;
+							keypadLocked = false;
+							PTTLocked = false;
+							key_event = EVENT_KEY_NONE;
+							keyboardReset();
+							if (menuSystemGetCurrentMenuNumber() != UI_LOCK_SCREEN)
+							{
+								menuSystemPushNewMenu(UI_LOCK_SCREEN);
+							}
+							else
+							{
+								menuLockScreenPop();
+							}
+						}
+					}
+					else
+					{
+						starUnlockStart = 0;
+					}
+				}
+
 				if ((key_event == EVENT_KEY_CHANGE) && (syntheticEvent == false))
 				{
 					bool continueToFilterKeys = true;
@@ -857,31 +889,12 @@ void applicationMainTask(void)
 
 					if (continueToFilterKeys)
 					{
-						if (KEYCHECK_LONGDOWN(keys, KEY_STAR) && (KEYCHECK_LONGDOWN_REPEAT(keys, KEY_STAR) == false))
+						if ((PTTToggledDown == false) && (menuSystemGetCurrentMenuNumber() != UI_LOCK_SCREEN))
 						{
-							keypadLocked = false;
-							PTTLocked = false;
-							key_event = EVENT_KEY_NONE;
-							keyboardReset();
-							if (menuSystemGetCurrentMenuNumber() != UI_LOCK_SCREEN)
-							{
-								menuSystemPushNewMenu(UI_LOCK_SCREEN);
-							}
-							else
-							{
-								menuLockScreenPop();
-							}
-							continueToFilterKeys = false;
+							menuSystemPushNewMenu(UI_LOCK_SCREEN);
 						}
-						else
-						{
-							if ((PTTToggledDown == false) && (menuSystemGetCurrentMenuNumber() != UI_LOCK_SCREEN))
-							{
-								menuSystemPushNewMenu(UI_LOCK_SCREEN);
-							}
 
-							key_event = EVENT_KEY_NONE;
-						}
+						key_event = EVENT_KEY_NONE;
 					}
                  }
 				// Lockout ORANGE AND BLUE (BLACK stay active regardless lock status, useful to trigger backlight)
