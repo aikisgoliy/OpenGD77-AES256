@@ -2246,7 +2246,7 @@ static void handleEvent(uiEvent_t *ev)
 			{
 				uiDataGlobal.displayChannelSettings = false;
 				keypadLocked = true;
-				PTTLocked = true;
+				PTTLocked = settingsIsOptionBitSet(BIT_STAR_LOCK_PTT);
 				keyboardReset();
 				menuSystemPushNewMenu(UI_LOCK_SCREEN);
 				return;
