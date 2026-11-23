@@ -857,19 +857,32 @@ void applicationMainTask(void)
 
 					if (continueToFilterKeys)
 					{
-						if ((PTTToggledDown == false) && (menuSystemGetCurrentMenuNumber() != UI_LOCK_SCREEN))
+						if (KEYCHECK_LONGDOWN(keys, KEY_STAR) && (KEYCHECK_LONGDOWN_REPEAT(keys, KEY_STAR) == false))
 						{
-							menuSystemPushNewMenu(UI_LOCK_SCREEN);
+							keypadLocked = false;
+							PTTLocked = false;
+							key_event = EVENT_KEY_NONE;
+							keyboardReset();
+							if (menuSystemGetCurrentMenuNumber() != UI_LOCK_SCREEN)
+							{
+								menuSystemPushNewMenu(UI_LOCK_SCREEN);
+							}
+							else
+							{
+								menuLockScreenPop();
+							}
+							continueToFilterKeys = false;
 						}
+						else
+						{
+							if ((PTTToggledDown == false) && (menuSystemGetCurrentMenuNumber() != UI_LOCK_SCREEN))
+							{
+								menuSystemPushNewMenu(UI_LOCK_SCREEN);
+							}
 
-						key_event = EVENT_KEY_NONE;
+							key_event = EVENT_KEY_NONE;
+						}
 					}
-
-					if (settingsIsOptionBitSet(BIT_PTT_LATCH) && PTTToggledDown)
-					{
-						PTTToggledDown = false;
-					}
-				}
 
 				// Lockout ORANGE AND BLUE (BLACK stay active regardless lock status, useful to trigger backlight)
 				if ((button_event == EVENT_BUTTON_CHANGE) && ((buttons & BUTTON_ORANGE) || (buttons & BUTTON_SK2)))
