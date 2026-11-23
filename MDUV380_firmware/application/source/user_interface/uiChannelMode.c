@@ -1774,11 +1774,11 @@ static void handleEvent(uiEvent_t *ev)
 				}
 			}
 		}
-		else if (KEYCHECK_LONGDOWN(ev->keys, KEY_STAR) && (KEYCHECK_LONGDOWN_REPEAT(ev->keys, KEY_STAR) == false) && (BUTTONCHECK_DOWN(ev, BUTTON_SK2) == 0))
+else if (KEYCHECK_LONGDOWN(ev->keys, KEY_STAR) && (KEYCHECK_LONGDOWN_REPEAT(ev->keys, KEY_STAR) == false) && (BUTTONCHECK_DOWN(ev, BUTTON_SK2) == 0))
 		{
 			uiDataGlobal.displayChannelSettings = false;
 			keypadLocked = true;
-			PTTLocked = true;
+			PTTLocked = settingsIsOptionBitSet(BIT_STAR_LOCK_PTT);
 			keyboardReset();
 			menuSystemPushNewMenu(UI_LOCK_SCREEN);
 			return;
