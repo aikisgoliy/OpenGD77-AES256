@@ -842,34 +842,41 @@ void applicationMainTask(void)
 			if (keypadLocked && ((buttons & BUTTON_PTT) == 0))
 			{
 				{
+				{
 					static uint32_t starUnlockStart = 0;
+					static bool starUnlockLatch = false;
 
-					if ((keys.key == KEY_STAR) && ((buttons & BUTTON_SK2) == 0) && (syntheticEvent == false))
+					if ((keyboardRead() == KEY_STAR) && ((buttons & BUTTON_SK2) == 0) && (syntheticEvent == false))
 					{
-						if (starUnlockStart == 0)
+						if (starUnlockLatch == false)
 						{
-							starUnlockStart = ticksGetMillis();
-						}
-						else if ((ticksGetMillis() - starUnlockStart) >= 1000U)
-						{
-							starUnlockStart = 0;
-							keypadLocked = false;
-							PTTLocked = false;
-							key_event = EVENT_KEY_NONE;
-							keyboardReset();
-							if (menuSystemGetCurrentMenuNumber() != UI_LOCK_SCREEN)
+							if (starUnlockStart == 0)
 							{
-								menuSystemPushNewMenu(UI_LOCK_SCREEN);
+								starUnlockStart = ticksGetMillis();
 							}
-							else
+							else if ((ticksGetMillis() - starUnlockStart) >= 1000U)
 							{
-								menuLockScreenPop();
+								starUnlockStart = 0;
+								starUnlockLatch = true;
+								keypadLocked = false;
+								PTTLocked = false;
+								key_event = EVENT_KEY_NONE;
+								keyboardReset();
+								if (menuSystemGetCurrentMenuNumber() != UI_LOCK_SCREEN)
+								{
+									menuSystemPushNewMenu(UI_LOCK_SCREEN);
+								}
+								else
+								{
+									menuLockScreenPop();
+								}
 							}
 						}
 					}
 					else
 					{
 						starUnlockStart = 0;
+						starUnlockLatch = false;
 					}
 				}
 
