@@ -1304,23 +1304,6 @@ static void handleEvent(uiEvent_t *ev)
 			return;
 		}
 	}
-{
-		static bool sk12LockLatch = false;
-
-		if ((BUTTONCHECK_DOWN(ev, BUTTON_SK1) == 0) && (BUTTONCHECK_DOWN(ev, BUTTON_SK2) == 0))
-		{
-			sk12LockLatch = false;
-		}
-		else if ((sk12LockLatch == false) && BUTTONCHECK_DOWN(ev, BUTTON_SK1) && BUTTONCHECK_DOWN(ev, BUTTON_SK2))
-		{
-			sk12LockLatch = true;
-			uiDataGlobal.displayChannelSettings = false;
-			keypadLocked = true;
-			PTTLocked = true;
-			menuSystemPushNewMenu(UI_LOCK_SCREEN);
-			return;
-		}
-	}
 	if (handleMonitorMode(ev))
 	{
 		uiDataGlobal.displayChannelSettings = false;
@@ -1791,29 +1774,14 @@ static void handleEvent(uiEvent_t *ev)
 				}
 			}
 		}
-		else if (KEYCHECK_LONGDOWN(ev->keys, KEY_STAR) && (BUTTONCHECK_DOWN(ev, BUTTON_SK2) == 0))
+		else if (KEYCHECK_LONGDOWN(ev->keys, KEY_STAR) && (KEYCHECK_LONGDOWN_REPEAT(ev->keys, KEY_STAR) == false) && (BUTTONCHECK_DOWN(ev, BUTTON_SK2) == 0))
 		{
-			if (trxGetMode() == RADIO_MODE_DIGITAL)
-			{
-				tsSetManualOverride(CHANNEL_CHANNEL, TS_NO_OVERRIDE);
-				tsSetContactHasBeenOverriden(CHANNEL_CHANNEL, false);
-
-				if ((currentRxGroupData.name[0] != 0) && (nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE] < currentRxGroupData.NOT_IN_CODEPLUG_numTGsInGroup))
-				{
-					codeplugContactGetDataForIndex(currentRxGroupData.contacts[nonVolatileSettings.currentIndexInTRxGroupList[SETTINGS_CHANNEL_MODE]], &currentContactData);
-				}
-				else
-				{
-					codeplugContactGetDataForIndex(currentChannelData->contact, &currentContactData);
-				}
-
-				trxUpdateTsForCurrentChannelWithSpecifiedContact(&currentContactData);
-
-				lastHeardClearLastID();
-				uiDataGlobal.displayQSOState = QSO_DISPLAY_DEFAULT_SCREEN;
-				uiChannelModeUpdateScreen(0);
-				announceItem(PROMPT_SEQUENCE_TS, PROMPT_THRESHOLD_1);
-			}
+			uiDataGlobal.displayChannelSettings = false;
+			keypadLocked = true;
+			PTTLocked = true;
+			keyboardReset();
+			menuSystemPushNewMenu(UI_LOCK_SCREEN);
+			return;
 		}
 		else if (KEYCHECK_LONGDOWN(ev->keys, KEY_HASH) && (KEYCHECK_LONGDOWN_REPEAT(ev->keys, KEY_HASH) == false))
 		{
