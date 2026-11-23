@@ -883,7 +883,7 @@ void applicationMainTask(void)
 							key_event = EVENT_KEY_NONE;
 						}
 					}
-
+                 }
 				// Lockout ORANGE AND BLUE (BLACK stay active regardless lock status, useful to trigger backlight)
 				if ((button_event == EVENT_BUTTON_CHANGE) && ((buttons & BUTTON_ORANGE) || (buttons & BUTTON_SK2)))
 				{
