@@ -322,11 +322,16 @@ static void updateScreen(bool isFirstRun)
 					}
 					break;
 #endif
-					case GENERAL_CHANNELS_ARE_READ_ONLY:
+							case GENERAL_CHANNELS_ARE_READ_ONLY:
 						leftSide = currentLanguage->locked;
 						rightSideConst = (settingsIsOptionBitSet(BIT_CHANNELS_ARE_READ_ONLY) ? currentLanguage->on : currentLanguage->off);
 						break;
+					case GENERAL_OPTIONS_STAR_LOCK_PTT:
+						leftSide = "Star lock PTT";
+						rightSideConst = (settingsIsOptionBitSet(BIT_STAR_LOCK_PTT) ? currentLanguage->on : currentLanguage->off);
+						break;
 			}
+
 
 			snprintf(buf, SCREEN_LINE_BUFFER_SIZE, "%s:%s", leftSide, (rightSideVar[0] ? rightSideVar : (rightSideConst ? rightSideConst : "")));
 
@@ -624,10 +629,16 @@ static void handleEvent(uiEvent_t *ev)
 					}
 					break;
 #endif
-				case GENERAL_CHANNELS_ARE_READ_ONLY:
+			case GENERAL_CHANNELS_ARE_READ_ONLY:
 					if (settingsIsOptionBitSet(BIT_CHANNELS_ARE_READ_ONLY) == false)
 					{
 						settingsSetOptionBit(BIT_CHANNELS_ARE_READ_ONLY, true);
+					}
+					break;
+				case GENERAL_OPTIONS_STAR_LOCK_PTT:
+					if (settingsIsOptionBitSet(BIT_STAR_LOCK_PTT) == false)
+					{
+						settingsSetOptionBit(BIT_STAR_LOCK_PTT, true);
 					}
 					break;
 			}
@@ -766,6 +777,12 @@ static void handleEvent(uiEvent_t *ev)
 					if (settingsIsOptionBitSet(BIT_CHANNELS_ARE_READ_ONLY))
 					{
 						settingsSetOptionBit(BIT_CHANNELS_ARE_READ_ONLY, false);
+					}
+					break;
+				case GENERAL_OPTIONS_STAR_LOCK_PTT:
+					if (settingsIsOptionBitSet(BIT_STAR_LOCK_PTT))
+					{
+						settingsSetOptionBit(BIT_STAR_LOCK_PTT, false);
 					}
 					break;
 			}
